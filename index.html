@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Weather App</title>
+
+  <!-- ✅ Internal CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .app {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 300px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 80px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      font-weight: bold;
+      
+    }
+
+    button:hover {
+      background-color: #005fcc;
+      
+    }
+
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>🌤️ Weather App</h1>
+    <input type="text" id="locationInput" placeholder="Enter city name" />
+    <button onclick="getTemperature()">Get Temperature</button>
+    <div id="output"></div>
+  </div>
+
+  <!-- ✅ Internal JavaScript -->
+  <script>
+    async function getTemperature() {
+      const location = document.getElementById("locationInput").value.trim();
+      const output = document.getElementById("output");
+
+      if (!location) {
+        output.innerHTML = "<span style='color: red;'>Please enter a city name.</span>";
+        return;
+      }
+
+      const apiKey = "8d07c8f97b8b4c25912180002251906";
+      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(location)}&aqi=yes`;
+
+      output.innerHTML = "Loading...";
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found");
+
+        const data = await response.json();
+        const city = data.location.name;
+        const country = data.location.country;
+        const temp = data.current.temp_c;
+
+        output.innerHTML = `
+          <strong>${city}, ${country}</strong><br>
+          🌡️ Temperature: <strong>${temp}°C</strong>
+        `;
+      } catch (error) {
+        output.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
